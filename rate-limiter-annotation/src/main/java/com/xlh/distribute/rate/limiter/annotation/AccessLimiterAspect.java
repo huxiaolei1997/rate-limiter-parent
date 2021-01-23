@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 @Component
 public class AccessLimiterAspect {
     @Autowired
-    private StringRedisTemplate stringRedisTemplate;
+    private StringRedisTemplate redisTemplate;
     @Autowired
     private RedisScript<Boolean> rateLimitLua;
 
@@ -55,7 +55,7 @@ public class AccessLimiterAspect {
         String key = accessLimiterAnnotation.methodKey();
         Integer limit = accessLimiterAnnotation.limit();
 
-        if (StringUtils.isEmpty(key)) {
+        if (!StringUtils.hasText(key)) {
             Class[] type = method.getParameterTypes();
             key = method.getName();
             if (type != null) {
@@ -64,7 +64,7 @@ public class AccessLimiterAspect {
                 key += "#" + paramTypes;
             }
         }
-        boolean acquired = stringRedisTemplate.execute(rateLimitLua
+        boolean acquired = redisTemplate.execute(rateLimitLua
                 , Lists.newArrayList(key) // key
                 , limit.toString()); // value列表
         if (!acquired) {

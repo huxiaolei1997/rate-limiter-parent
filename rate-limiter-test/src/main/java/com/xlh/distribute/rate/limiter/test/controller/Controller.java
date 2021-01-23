@@ -22,8 +22,6 @@ public class Controller {
     @Autowired
     private AccessLimiter accessLimiter;
 
-    RateLimiter limiter = RateLimiter.create(2.0);
-
 
     // 非阻塞限流
     @GetMapping("/test")
